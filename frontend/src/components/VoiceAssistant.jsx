@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-
+import { API_BASE } from '../config'
 const STATES = { IDLE: 'idle', LISTENING: 'listening', PROCESSING: 'processing', SPEAKING: 'speaking' }
 
 function buildContext(route, deliveryStatus, canToggle) {
@@ -22,7 +22,7 @@ function buildContext(route, deliveryStatus, canToggle) {
 }
 
 async function askClaude(transcript, context) {
-  const res = await fetch('http://localhost:8000/api/chat', {
+  const res = await fetch(`${API_BASE}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ transcript, context })
@@ -40,7 +40,7 @@ export default function VoiceAssistant({ route, deliveryStatus, canToggle, onMar
   async function speak(text) {
     setStatus(STATES.SPEAKING)
     try {
-      const res = await fetch('http://localhost:8000/api/tts', {
+      const res = await fetch(`${API_BASE}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })

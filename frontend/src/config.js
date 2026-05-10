@@ -1,7 +1,7 @@
 // Edit these values to retarget the admin route builder.
 // Imported by AdminRouteCreator.jsx — change here, not in the component.
 
-export const API_BASE = 'http://localhost:8000'
+export const API_BASE = 'https://danvancea-interhack26.hf.space'
 
 // Depot the optimizer routes vans out of.
 // `id` is a free label; coords drive the actual routing.
