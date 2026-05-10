@@ -438,7 +438,14 @@ def chat_endpoint(req: ChatRequest):
             system=system,
             messages=[{"role": "user", "content": req.transcript}]
         )
-        return json.loads(response.content[0].text)
+        raw_text = response.content[0].text.strip()
+        if raw_text.startswith("```"):
+            lines = raw_text.split("\n")
+            if lines[0].startswith("```"): lines = lines[1:]
+            if lines[-1].startswith("```"): lines = lines[:-1]
+            raw_text = "\n".join(lines).strip()
+        
+        return json.loads(raw_text)
     except Exception as e:
         raise HTTPException(500, f"Anthropic API error: {e}")
 
