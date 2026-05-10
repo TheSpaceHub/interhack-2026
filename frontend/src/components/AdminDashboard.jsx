@@ -69,13 +69,13 @@ function AdminMap({ routes }) {
       gestureHandling="greedy"
     >
       <BoundsFitter routes={routes} />
-      {routes.map((route, i) => (
+      {routes.map((route) => (
         <React.Fragment key={route.driver_id}>
-          <RouteRenderer points={route.points ?? []} deliveryStatus={route.delivery_status} activeColor={route.status === 'disrupted' ? '#F59E0B' : COLORS[i % COLORS.length]} />
+          <RouteRenderer points={route.points ?? []} deliveryStatus={route.delivery_status} activeColor={route.status === 'disrupted' ? '#F59E0B' : route.originalColor} />
         </React.Fragment>
       ))}
 
-      {routes.map((route, ri) =>
+      {routes.map((route) =>
         (route.points ?? []).map((point, i) => (
           <AdvancedMarker
             key={`${route.driver_id}-${i}`}
@@ -84,7 +84,7 @@ function AdminMap({ routes }) {
           >
             <div
               className="admin-stop-pin"
-              style={{ borderColor: COLORS[ri % COLORS.length], color: COLORS[ri % COLORS.length] }}
+              style={{ borderColor: route.originalColor, color: route.originalColor }}
             >
               {i + 1}
             </div>
@@ -127,9 +127,10 @@ export default function AdminDashboard() {
     return <AdminRouteCreator onBack={() => setView('fleet')} />
   }
 
+  const routesWithColors = routes.map((r, i) => ({ ...r, originalColor: COLORS[i % COLORS.length] }))
   const visibleRoutes = selectedId
-    ? routes.filter((r) => r.driver_id === selectedId)
-    : routes
+    ? routesWithColors.filter((r) => r.driver_id === selectedId)
+    : routesWithColors
 
   return (
     <div className="dashboard">
