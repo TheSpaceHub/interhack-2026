@@ -71,7 +71,7 @@ function AdminMap({ routes }) {
       <BoundsFitter routes={routes} />
       {routes.map((route, i) => (
         <React.Fragment key={route.driver_id}>
-          <RouteRenderer points={route.points ?? []} deliveryStatus={route.delivery_status} activeColor={route.status === 'disrupted' ? '#F59E0B' : '#3B82F6'} />
+          <RouteRenderer points={route.points ?? []} deliveryStatus={route.delivery_status} activeColor={route.status === 'disrupted' ? '#F59E0B' : COLORS[i % COLORS.length]} />
         </React.Fragment>
       ))}
 
