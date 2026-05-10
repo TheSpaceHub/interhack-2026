@@ -5,6 +5,7 @@ const STATES = { IDLE: 'idle', LISTENING: 'listening', PROCESSING: 'processing',
 function buildContext(route, deliveryStatus, canToggle) {
   if (!route || !deliveryStatus) return 'No route loaded.'
   const firstPending = deliveryStatus.findIndex((s) => s === 'pending')
+  const delivered = deliveryStatus.filter((s) => s === 'delivered').length
   const nextStop = firstPending >= 0 ? route.points[firstPending] : null
   const timeWindow = firstPending >= 0 ? route.windows?.[firstPending] : null
   const serviceTime = firstPending >= 0 ? route.service_times?.[firstPending] : null
@@ -12,6 +13,7 @@ function buildContext(route, deliveryStatus, canToggle) {
 
   return [
     `Truck: ${route.truck_id}`,
+    `Progress: ${delivered} of ${route.points.length} stops delivered`,
     nextStop ? `Next stop (#${firstPending + 1}): ${nextStop.address}` : 'All stops completed',
     timeWindow ? `Delivery window: ${timeWindow.start} – ${timeWindow.end}` : '',
     serviceTime != null ? `Expected service time: ${serviceTime} min` : '',
@@ -78,6 +80,12 @@ export default function VoiceAssistant({ route, deliveryStatus, canToggle, onMar
 
       if (result.action === 'mark_delivered' && firstPending >= 0) {
         onMarkDelivered(firstPending)
+      } else if (result.action === 'navigate' && firstPending >= 0) {
+        const p = route.points[firstPending]
+        window.open(
+          `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=driving`,
+          '_blank'
+        )
       }
 
       speak(result.response)
